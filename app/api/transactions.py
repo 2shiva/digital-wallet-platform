@@ -1,4 +1,3 @@
-
 import hashlib
 import json
 from decimal import Decimal
@@ -10,6 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.dependencies import get_current_user
 from app.database.session import get_db
 from app.models import Transaction, TransferRequest, User, Wallet
@@ -78,7 +78,14 @@ def deposit_money(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> TransactionResponse:
-    """Create a development-only wallet deposit."""
+    """Create a manual wallet deposit only when explicitly enabled."""
+
+    # Manual deposits are disabled by default.
+    if settings.DEPOSIT_MODE != "enabled":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Manual deposits are disabled.",
+        )
 
     validate_amount(deposit_data.amount)
 
