@@ -3,7 +3,7 @@ from decimal import Decimal
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine, event
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
@@ -25,7 +25,6 @@ def test_db():
 
     # SQLite does not support PostgreSQL's regular-expression operator.
     # Remove only that constraint from the temporary test schema.
-    tables = Base.metadata.sorted_tables
     original_constraint = next(
         constraint
         for constraint in Wallet.__table__.constraints
@@ -61,18 +60,20 @@ def test_db():
             id=1,
             role_id=4,
             full_name="Test Sender",
-            email="sender@example.test",
+            email="sender@example.com",
             hashed_password="not-used-in-these-tests",
             is_active=True,
         )
+
         recipient = User(
             id=2,
             role_id=4,
             full_name="Test Recipient",
-            email="recipient@example.test",
+            email="recipient@example.com",
             hashed_password="not-used-in-these-tests",
             is_active=True,
         )
+
         session.add_all([sender, recipient])
         session.flush()
 
@@ -83,6 +84,7 @@ def test_db():
             currency="INR",
             status="active",
         )
+
         recipient_wallet = Wallet(
             id=2,
             user_id=recipient.id,
@@ -90,6 +92,7 @@ def test_db():
             currency="INR",
             status="active",
         )
+
         session.add_all([sender_wallet, recipient_wallet])
         session.commit()
 
@@ -114,17 +117,22 @@ def client(test_db):
     app.dependency_overrides[get_db] = override_get_db
     app.dependency_overrides[get_current_user] = override_current_user
 
-    with TestClient(app) as test_client:
-        yield test_client
-
-    app.dependency_overrides.clear()
+    try:
+        with TestClient(app) as test_client:
+            yield test_client
+    finally:
+        app.dependency_overrides.clear()
 
 
 @pytest.fixture()
 def sender_wallet(test_db):
+    """Return the sender's wallet."""
+
     return test_db.query(Wallet).filter_by(user_id=1).one()
 
 
 @pytest.fixture()
 def recipient_wallet(test_db):
+    """Return the recipient's wallet."""
+
     return test_db.query(Wallet).filter_by(user_id=2).one()
