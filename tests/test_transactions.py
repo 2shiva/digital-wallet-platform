@@ -64,9 +64,7 @@ def test_request_hash_changes_when_request_details_change():
 def test_idempotency_key_is_trimmed():
     key = "  wallet-transfer-test-001  "
 
-    assert normalize_idempotency_key(key) == (
-        "wallet-transfer-test-001"
-    )
+    assert normalize_idempotency_key(key) == "wallet-transfer-test-001"
 
 
 def test_idempotency_key_rejects_short_key():

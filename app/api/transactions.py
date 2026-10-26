@@ -36,13 +36,13 @@ class WithdrawalRequest(BaseModel):
 def validate_amount(amount: Decimal) -> None:
     if not amount.is_finite() or amount <= 0:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="Amount must be positive and finite.",
         )
 
     if amount.as_tuple().exponent < -2:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="Amount cannot have more than two decimal places.",
         )
 
@@ -61,7 +61,7 @@ def normalize_idempotency_key(idempotency_key: str) -> str:
 
     if len(normalized_key) < 16:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="Idempotency-Key must contain at least 16 characters.",
         )
 
