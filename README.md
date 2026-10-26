@@ -1,223 +1,92 @@
-Digital Wallet Platform
+# Digital Wallet Platform
 
-A secure digital wallet REST API built with FastAPI, Python, and PostgreSQL, featuring wallet management, transaction processing, JWT authentication, and idempotency protection for financial operations.
+## Project Description
 
-Features
+The Digital Wallet Platform is a backend application developed using Python, FastAPI, and PostgreSQL.
 
-Authentication: JWT-based authentication and authenticated API access.
+It allows users to register, log in, check their wallet balance, transfer money, withdraw money, and view transaction history.
 
-Wallet Management: Retrieve wallet information and balance.
+## Technologies Used
 
-Transactions: Support for deposits, withdrawals, transfers, and transaction history.
+- Python
+- FastAPI
+- PostgreSQL
+- SQLAlchemy
+- Alembic
+- Pytest
+- JWT Authentication
 
-Idempotency: Prevent duplicate transfer and withdrawal processing when clients retry requests with the same idempotency key.
+## Main Features
 
-Request Validation: Validate transaction amounts and request data.
+- User Registration and Login
+- Secure Authentication
+- Wallet Balance
+- Money Transfer
+- Money Withdrawal
+- Transaction History
+- Duplicate Transaction Prevention
+- Automated Testing
 
-Database Migrations: Manage database schema changes with Alembic.
+## How to Run the Project
 
-Automated Testing: Test transaction logic and API behavior with pytest.
+### 1. Clone the Project
 
-Technology Stack
-
-Python
-
-FastAPI
-
-PostgreSQL
-
-SQLAlchemy
-
-Alembic
-
-Pytest
-
-JWT authentication
-
-Project Structure
-
-digital-wallet-platform/
-├── alembic/
-│   └── versions/
-├── app/
-│   ├── api/
-│   │   ├── auth.py
-│   │   ├── transactions.py
-│   │   └── wallets.py
-│   ├── core/
-│   │   ├── config.py
-│   │   ├── dependencies.py
-│   │   └── security.py
-│   ├── database/
-│   │   └── session.py
-│   ├── models/
-│   ├── repositories/
-│   ├── schemas/
-│   ├── services/
-│   └── main.py
-├── tests/
-│   ├── conftest.py
-│   ├── test_transaction_api.py
-│   └── test_transactions.py
-├── .env.example
-├── .gitignore
-├── alembic.ini
-├── dependencies.py
-├── pytest.ini
-├── requirements.txt
-└── README.md
-
-Prerequisites
-
-Install the following before running the project:
-
-Python compatible with the installed dependencies
-
-PostgreSQL
-
-Git
-
-Installation
-
-1. Clone the repository
-
+```bash
 git clone https://github.com/2shiva/digital-wallet-platform.git
 cd digital-wallet-platform
+```
 
-2. Create and activate a virtual environment
+### 2. Create a Virtual Environment
 
-On macOS or Linux:
-
+```bash
 python3 -m venv venv
 source venv/bin/activate
+```
 
-3. Install dependencies
+### 3. Install Dependencies
 
-python -m pip install -r requirements.txt
+```bash
+pip install -r requirements.txt
+```
 
-4. Configure environment variables
+### 4. Configure the Database
 
-Create your local environment file:
+Create a `.env` file using the example:
 
+```bash
 cp .env.example .env
+```
 
-Open .env and configure the values for your local PostgreSQL database.
+Update the database details and secret key in `.env`.
 
-Required settings:
+### 5. Run Database Migrations
 
-DATABASE_URL=postgresql://YOUR_DB_USER:YOUR_DB_PASSWORD@localhost:5432/digital_wallet_db
-SECRET_KEY=replace-with-a-strong-random-secret
-ACCESS_TOKEN_EXPIRE_MINUTES=15
-REFRESH_TOKEN_EXPIRE_DAYS=7
-
-Replace the placeholders with your local configuration. Generate a strong secret key and never commit .env or real credentials to GitHub.
-
-5. Prepare the database
-
-Create the PostgreSQL database and database user according to your local configuration.
-
-Apply the Alembic migrations:
-
+```bash
 alembic upgrade head
+```
 
-If your database already contains the application's tables, check the current migration state before applying migrations.
+### 6. Start the Application
 
-6. Run the application
-
+```bash
 uvicorn app.main:app --reload
+```
 
-The development server will normally be available at:
-
-http://127.0.0.1:8000
-
-FastAPI interactive API documentation:
+Open the API documentation in your browser:
 
 http://127.0.0.1:8000/docs
 
-API Capabilities
+## Run Tests
 
-The application provides endpoints for:
+```bash
+python -m pytest -v
+```
 
-Feature
+The latest recorded test run completed with **47 tests passed**. PostgreSQL tests require a configured test database.
 
-Description
+## Author
 
-Authentication
+GitHub: [@2shiva](https://github.com/2shiva)
 
-Authenticate users and access protected endpoints
-
-Wallet
-
-Retrieve the authenticated user's wallet
-
-Deposit
-
-Add funds to a wallet
-
-Withdrawal
-
-Withdraw funds subject to validation and balance checks
-
-Transfer
-
-Transfer funds between wallets
-
-Transaction History
-
-Retrieve the authenticated user's transaction history
-
-For exact endpoint paths, request schemas, and authentication requirements, refer to the API documentation at /docs while the application is running.
-
-Idempotency
-
-Transfer and withdrawal requests support an Idempotency-Key header.
-
-Example:
-
-Idempotency-Key: unique-operation-key-123
-
-The same key and same request details can be used to retry an operation without creating duplicate transactions. Reusing a key with different request details returns a conflict response (409 Conflict).
-
-Clients should generate a unique key for each new financial operation and reuse that key when retrying the same operation.
-
-Running Tests
-
-Activate the virtual environment, then run:
-
-python -m pytest -q
-
-The current test suite contains 13 tests covering transaction helper functions and API behavior, including idempotency, balance updates, and insufficient-balance cases.
-
-Security Notes
-
-Keep .env out of version control.
-
-Never commit passwords, signing secrets, or production database credentials.
-
-Use a strong, unique secret key.
-
-Use HTTPS and secure deployment configuration in production.
-
-Review authentication, authorization, transaction consistency, and database configuration before production use.
-
-Future Improvements
-
-Potential enhancements include:
-
-Expanded authentication and authorization tests.
-
-Improved API documentation and error handling.
-
-Structured logging and monitoring.
-
-CI automation for tests.
-
-Production deployment and operational hardening.
-
-Author
-
-GitHub: @2shiva
-
-Repository
+## GitHub Repository
 
 https://github.com/2shiva/digital-wallet-platform
